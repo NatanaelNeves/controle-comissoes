@@ -17,7 +17,7 @@ const supabase = createClient(supabaseUrl, supabaseKey);
 app.get('/comissoes', async (req, res) => {
     try {
         const { data, error } = await supabase
-            .from('tbComissao')  // Apenas o nome da tabela sem o 'public.'
+            .from('public.tbComissao')  // Usando o esquema public
             .select('*');
 
         if (error) {
@@ -38,7 +38,7 @@ app.post('/comissoes', async (req, res) => {
 
     try {
         const { data, error } = await supabase
-            .from('tbComissao')  // Apenas o nome da tabela sem o 'public.'
+            .from('public.tbComissao')  // Usando o esquema public
             .insert([
                 { valor, status_id, data_pagamento, vendedor_id, meta_vendas }
             ]);
