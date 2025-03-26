@@ -53,25 +53,37 @@ app.get('/comissoes', async (req, res) => {
 
 app.post('/comissoes', async (req, res) => {
     try {
-        const { valor, vendedor_id, data_pagamento, meta_vendas } = req.body;
+        // Campos esperados (ajuste conforme sua tabela tbcomissao)
+        const { nome_vendedor, valor, data_pagamento, valor_venda, percentual, meta_vendas } = req.body;
         
-        // Validação básica
-        if (!valor || !vendedor_id || !data_pagamento) {
+        // Validação dos campos obrigatórios
+        if (!nome_vendedor || !valor || !data_pagamento || !valor_venda || !percentual) {
             return res.status(400).json({ 
                 error: 'Dados incompletos',
-                required_fields: ['valor', 'vendedor_id', 'data_pagamento']
+                required_fields: {
+                    nome_vendedor: 'string',
+                    valor: 'number',
+                    data_pagamento: 'string (YYYY-MM-DD)',
+                    valor_venda: 'number',
+                    percentual: 'number'
+                },
+                optional_fields: {
+                    meta_vendas: 'number'
+                }
             });
         }
 
-        // Inserção na tabela com nome correto
+        // Inserção no banco de dados
         const { data, error } = await supabase
             .from('tbcomissao')
             .insert([{
-                valor,
-                vendedor_id,
+                nome_vendedor,
+                valor: parseFloat(valor),
                 data_pagamento,
-                meta_vendas: meta_vendas || null,
-                status_id: 1, // Status padrão (1 = pendente)
+                valor_venda: parseFloat(valor_venda),
+                percentual: parseFloat(percentual),
+                meta_vendas: meta_vendas ? parseFloat(meta_vendas) : null,
+                status_id: 1, // Default para "pendente"
                 criado_em: new Date().toISOString()
             }])
             .select();
@@ -83,7 +95,7 @@ app.post('/comissoes', async (req, res) => {
         console.error('Erro ao criar comissão:', err);
         res.status(500).json({ 
             error: 'Falha ao registrar comissão',
-            details: err.message
+            details: err.message 
         });
     }
 });

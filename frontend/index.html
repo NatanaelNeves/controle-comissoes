@@ -3,319 +3,158 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gestão de Comissões | SalesControl</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <title>Gestão de Comissões</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         :root {
-            --primary-color: #3498db;
-            --secondary-color: #2c3e50;
-            --success-color: #2ecc71;
-            --warning-color: #e67e22;
-            --danger-color: #e74c3c;
-            --light-bg: #f8f9fa;
+            --primary: #3498db;
+            --secondary: #2c3e50;
+            --success: #2ecc71;
+            --warning: #f39c12;
         }
-        
         body {
             font-family: 'Roboto', sans-serif;
             background-color: #f5f7fa;
         }
-        
-        .header {
-            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+        .header-gradient {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
             color: white;
-            padding: 2rem;
-            border-radius: 10px;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-            margin-bottom: 2rem;
         }
-        
-        .card {
-            border: none;
-            border-radius: 10px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
-            transition: transform 0.3s ease;
-            margin-bottom: 1.5rem;
+        .card-dashboard {
+            border-left: 4px solid var(--primary);
+            transition: transform 0.3s;
         }
-        
-        .card:hover {
+        .card-dashboard:hover {
             transform: translateY(-5px);
         }
-        
-        .card-header {
-            background-color: white;
-            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
-            font-weight: 500;
+        .progress-thin {
+            height: 8px;
         }
-        
-        .table {
-            margin-bottom: 0;
+        .table-responsive {
+            max-height: 500px;
         }
-        
-        .table th {
-            background-color: var(--light-bg);
-            font-weight: 500;
-        }
-        
-        .status-badge {
-            padding: 0.35rem 0.65rem;
-            border-radius: 50px;
-            font-size: 0.75rem;
-            font-weight: 500;
-        }
-        
-        .status-pendente {
-            background-color: rgba(230, 126, 34, 0.1);
-            color: var(--warning-color);
-        }
-        
-        .status-pago {
-            background-color: rgba(46, 204, 113, 0.1);
-            color: var(--success-color);
-        }
-        
-        .btn-primary {
-            background-color: var(--primary-color);
-            border-color: var(--primary-color);
-        }
-        
-        .btn-primary:hover {
-            background-color: #2980b9;
-            border-color: #2980b9;
-        }
-        
-        .form-control:focus, .form-select:focus {
-            border-color: var(--primary-color);
-            box-shadow: 0 0 0 0.25rem rgba(52, 152, 219, 0.25);
-        }
-        
-        .total-card {
-            background-color: white;
-            border-left: 4px solid var(--primary-color);
-        }
-        
-        .search-container {
-            position: relative;
-        }
-        
-        .search-container i {
-            position: absolute;
-            top: 50%;
-            left: 15px;
-            transform: translateY(-50%);
-            color: #6c757d;
-        }
-        
-        .search-input {
-            padding-left: 40px;
-        }
-        
-        .pagination .page-item.active .page-link {
-            background-color: var(--primary-color);
-            border-color: var(--primary-color);
-        }
-        
-        .pagination .page-link {
-            color: var(--primary-color);
-        }
-        
-        .loading-spinner {
-            display: none;
-            width: 3rem;
-            height: 3rem;
-        }
-        
         .toast-container {
-            position: fixed;
             top: 20px;
             right: 20px;
             z-index: 1100;
         }
-        
-        @media (max-width: 768px) {
-            .table-responsive {
-                overflow-x: auto;
-                -webkit-overflow-scrolling: touch;
-            }
-            
-            .toast-container {
-                top: 10px;
-                right: 10px;
-                left: 10px;
-            }
-        }
     </style>
 </head>
-<body class="container mt-4">
+<body class="container py-4">
     <!-- Cabeçalho -->
-    <div class="header text-center">
-        <h1><i class="bi bi-currency-dollar"></i> Gestão de Comissões</h1>
-        <p class="lead mb-0">Controle completo de pagamentos, metas e desempenho de vendedores</p>
+    <div class="header-gradient rounded-3 p-4 mb-4 text-center shadow">
+        <h1><i class="bi bi-cash-stack"></i> Gestão de Comissões</h1>
+        <p class="lead mb-0">Registro e controle de comissões pagas a vendedores</p>
     </div>
 
-    <!-- Cards Resumo -->
-    <div class="row mb-4">
+    <!-- Dashboard -->
+    <div class="row mb-4 g-3">
         <div class="col-md-4">
-            <div class="card total-card">
+            <div class="card card-dashboard h-100">
                 <div class="card-body">
-                    <h5 class="card-title">Total a Pagar</h5>
-                    <h2 class="card-text" id="total-pagar">R$ 0,00</h2>
-                    <p class="text-muted mb-0"><small>Comissões pendentes</small></p>
+                    <h5 class="card-title"><i class="bi bi-wallet2"></i> Total Pago</h5>
+                    <h2 id="total-pago" class="display-6">R$ 0,00</h2>
+                    <p class="text-muted mb-0">Este mês</p>
                 </div>
             </div>
         </div>
         <div class="col-md-4">
-            <div class="card total-card">
+            <div class="card card-dashboard h-100">
                 <div class="card-body">
-                    <h5 class="card-title">Total Pago</h5>
-                    <h2 class="card-text" id="total-pago">R$ 0,00</h2>
-                    <p class="text-muted mb-0"><small>Este mês</small></p>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-4">
-            <div class="card total-card">
-                <div class="card-body">
-                    <h5 class="card-title">Meta do Mês</h5>
-                    <h2 class="card-text" id="meta-mes">R$ 0,00</h2>
-                    <div class="progress mt-2" style="height: 8px;">
-                        <div id="meta-progress" class="progress-bar bg-success" role="progressbar" style="width: 0%"></div>
+                    <h5 class="card-title"><i class="bi bi-graph-up"></i> Meta vs Realizado</h5>
+                    <div class="progress progress-thin mt-2">
+                        <div id="meta-progress" class="progress-bar bg-success" style="width: 0%"></div>
                     </div>
+                    <div id="meta-text" class="mt-2 small text-muted">Meta: R$ 0,00 | Realizado: R$ 0,00</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card card-dashboard h-100">
+                <div class="card-body">
+                    <h5 class="card-title"><i class="bi bi-calendar-check"></i> Último Pagamento</h5>
+                    <h4 id="ultimo-pagamento" class="display-6">-</h4>
+                    <p id="ultimo-vendedor" class="text-muted mb-0">Nenhum registro</p>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Formulário para Adicionar Comissão -->
-    <div class="card">
-        <div class="card-header d-flex justify-content-between align-items-center">
-            <h5 class="mb-0"><i class="bi bi-plus-circle"></i> Registrar Nova Comissão</h5>
-            <button class="btn btn-sm btn-outline-primary" type="button" data-bs-toggle="collapse" data-bs-target="#formCollapse">
-                <i class="bi bi-chevron-down"></i>
-            </button>
+    <!-- Gráfico e Formulário -->
+    <div class="row mb-4 g-3">
+        <div class="col-lg-8">
+            <div class="card shadow-sm h-100">
+                <div class="card-body">
+                    <h5 class="card-title"><i class="bi bi-bar-chart"></i> Histórico Mensal</h5>
+                    <canvas id="comissoes-chart" height="250"></canvas>
+                </div>
+            </div>
         </div>
-        <div class="collapse show" id="formCollapse">
-            <div class="card-body">
-                <form id="formComissao">
-                    <div class="row">
-                        <div class="col-md-6 mb-3">
-                            <label for="vendedor" class="form-label">Vendedor</label>
-                            <select class="form-select" id="vendedor" required>
-                                <option value="" selected disabled>Selecione um vendedor</option>
-                                <!-- Opções serão carregadas via JavaScript -->
-                            </select>
+        <div class="col-lg-4">
+            <div class="card shadow-sm h-100">
+                <div class="card-body">
+                    <h5 class="card-title"><i class="bi bi-plus-circle"></i> Nova Comissão</h5>
+                    <form id="form-comissao">
+                        <div class="mb-3">
+                            <label class="form-label">Vendedor</label>
+                            <input type="text" class="form-control" id="nome-vendedor" required>
                         </div>
-                        <div class="col-md-6 mb-3">
-                            <label for="valorVenda" class="form-label">Valor da Venda</label>
-                            <div class="input-group">
-                                <span class="input-group-text">R$</span>
-                                <input type="number" class="form-control" id="valorVenda" step="0.01" min="0" required>
-                            </div>
+                        <div class="mb-3">
+                            <label class="form-label">Valor da Venda (R$)</label>
+                            <input type="number" step="0.01" class="form-control" id="valor-venda" required>
                         </div>
-                    </div>
-                    
-                    <div class="row">
-                        <div class="col-md-4 mb-3">
-                            <label for="comissaoPercentual" class="form-label">Percentual de Comissão</label>
-                            <div class="input-group">
-                                <input type="number" class="form-control" id="comissaoPercentual" min="0" max="100" value="5" required>
-                                <span class="input-group-text">%</span>
-                            </div>
+                        <div class="mb-3">
+                            <label class="form-label">Percentual (%)</label>
+                            <input type="number" step="0.1" class="form-control" id="percentual" value="5" required>
                         </div>
-                        <div class="col-md-4 mb-3">
-                            <label for="valorComissao" class="form-label">Valor da Comissão</label>
-                            <div class="input-group">
-                                <span class="input-group-text">R$</span>
-                                <input type="number" class="form-control" id="valorComissao" readonly>
-                            </div>
+                        <div class="mb-3">
+                            <label class="form-label">Comissão (R$)</label>
+                            <input type="number" step="0.01" class="form-control" id="valor-comissao" readonly>
                         </div>
-                        <div class="col-md-4 mb-3">
-                            <label for="dataPagamento" class="form-label">Data de Pagamento</label>
-                            <input type="date" class="form-control" id="dataPagamento" required>
+                        <div class="mb-3">
+                            <label class="form-label">Meta (R$)</label>
+                            <input type="number" step="0.01" class="form-control" id="meta-vendas">
                         </div>
-                    </div>
-                    
-                    <div class="row">
-                        <div class="col-md-6 mb-3">
-                            <label for="status" class="form-label">Status</label>
-                            <select class="form-select" id="status" required>
-                                <option value="1">Pendente</option>
-                                <option value="2">Pago</option>
-                            </select>
+                        <div class="mb-3">
+                            <label class="form-label">Data</label>
+                            <input type="date" class="form-control" id="data-pagamento" required>
                         </div>
-                        <div class="col-md-6 mb-3">
-                            <label for="metaVendas" class="form-label">Meta de Vendas (R$)</label>
-                            <input type="number" class="form-control" id="metaVendas" step="0.01" min="0" required>
-                        </div>
-                    </div>
-                    
-                    <div class="d-flex justify-content-end">
-                        <button type="submit" class="btn btn-primary">
-                            <i class="bi bi-save"></i> Salvar Comissão
+                        <button type="submit" class="btn btn-primary w-100">
+                            <i class="bi bi-save"></i> Registrar
                         </button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
-
-    <!-- Filtros e Busca -->
-    <div class="card">
-        <div class="card-body">
-            <div class="row">
-                <div class="col-md-6 mb-3 mb-md-0">
-                    <div class="search-container">
-                        <i class="bi bi-search"></i>
-                        <input type="text" class="form-control search-input" id="busca" placeholder="Buscar vendedor...">
-                    </div>
-                </div>
-                <div class="col-md-3 mb-3 mb-md-0">
-                    <select class="form-select" id="filtroStatus">
-                        <option value="0">Todos os status</option>
-                        <option value="1">Pendentes</option>
-                        <option value="2">Pagas</option>
-                    </select>
-                </div>
-                <div class="col-md-3">
-                    <input type="month" class="form-control" id="filtroMes">
+                    </form>
                 </div>
             </div>
         </div>
     </div>
 
     <!-- Tabela de Comissões -->
-    <div class="card">
-        <div class="card-header d-flex justify-content-between align-items-center">
-            <h5 class="mb-0"><i class="bi bi-list-ul"></i> Histórico de Comissões</h5>
-            <div class="d-flex align-items-center">
-                <div class="spinner-border text-primary loading-spinner me-2" role="status">
-                    <span class="visually-hidden">Carregando...</span>
-                </div>
-                <button id="btnExportar" class="btn btn-sm btn-outline-secondary">
-                    <i class="bi bi-download"></i> Exportar
-                </button>
-            </div>
-        </div>
+    <div class="card shadow-sm">
         <div class="card-body">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h5 class="card-title mb-0"><i class="bi bi-list-check"></i> Registro de Comissões</h5>
+                <div class="d-flex">
+                    <input type="month" class="form-control me-2" id="filtro-mes">
+                    <input type="text" class="form-control" placeholder="Filtrar vendedor..." id="filtro-vendedor">
+                </div>
+            </div>
             <div class="table-responsive">
                 <table class="table table-hover">
-                    <thead>
+                    <thead class="table-light">
                         <tr>
-                            <th>ID</th>
+                            <th>Data</th>
                             <th>Vendedor</th>
-                            <th>Valor Venda</th>
-                            <th>Comissão</th>
-                            <th>%</th>
-                            <th>Status</th>
-                            <th>Pagamento</th>
-                            <th>Meta</th>
-                            <th>Ações</th>
+                            <th class="text-end">Valor Venda</th>
+                            <th class="text-end">Comissão</th>
+                            <th class="text-end">%</th>
+                            <th class="text-end">Meta</th>
                         </tr>
                     </thead>
-                    <tbody id="comissoes-table">
+                    <tbody id="tabela-comissoes">
                         <tr>
-                            <td colspan="9" class="text-center py-5">
+                            <td colspan="6" class="text-center py-4">
                                 <div class="spinner-border text-primary" role="status">
                                     <span class="visually-hidden">Carregando...</span>
                                 </div>
@@ -324,514 +163,286 @@
                     </tbody>
                 </table>
             </div>
-            
-            <!-- Paginação -->
-            <nav aria-label="Page navigation" class="mt-3">
-                <ul class="pagination justify-content-center" id="pagination">
-                    <!-- Paginação será gerada via JavaScript -->
-                </ul>
-            </nav>
-        </div>
-    </div>
-
-    <!-- Modal de Confirmação -->
-    <div class="modal fade" id="confirmModal" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="modalTitle">Confirmar Ação</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body" id="modalBody">
-                    Tem certeza que deseja excluir esta comissão?
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                    <button type="button" class="btn btn-danger" id="modalConfirm">Confirmar</button>
-                </div>
-            </div>
         </div>
     </div>
 
     <!-- Toast Notification -->
-    <div class="toast-container">
-        <div id="liveToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+    <div class="toast-container position-fixed">
+        <div id="live-toast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
             <div class="toast-header">
-                <strong class="me-auto" id="toastTitle">Notificação</strong>
+                <strong class="me-auto" id="toast-title">Notificação</strong>
                 <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
             </div>
-            <div class="toast-body" id="toastMessage">
-                Mensagem de notificação
-            </div>
+            <div class="toast-body" id="toast-message"></div>
         </div>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-        // Variáveis globais
-        let comissoes = [];
-        let vendedores = [];
-        let currentPage = 1;
-        const itemsPerPage = 10;
-        const API_URL = 'https://controle-comissoes.onrender.com'; // Altere para sua URL de produção
-        
+        // Configuração
+        const API_URL = 'https://controle-comissoes.onrender.com'; // Seu backend no Render
+        let comissoesChart;
+        const toastEl = document.getElementById('live-toast');
+        const toast = new bootstrap.Toast(toastEl, { autohide: true, delay: 5000 });
+
         // Inicialização
-        document.addEventListener('DOMContentLoaded', async function() {
-            // Inicializa toasts
-            const toastEl = document.getElementById('liveToast');
-            const toast = new bootstrap.Toast(toastEl, { autohide: true, delay: 5000 });
+        document.addEventListener('DOMContentLoaded', function() {
+            // Configura data padrão
+            document.getElementById('data-pagamento').valueAsDate = new Date();
             
-            await carregarVendedores();
-            await carregarComissoes();
-            atualizarResumo();
+            // Eventos
+            document.getElementById('valor-venda').addEventListener('input', calcularComissao);
+            document.getElementById('percentual').addEventListener('input', calcularComissao);
+            document.getElementById('form-comissao').addEventListener('submit', salvarComissao);
+            document.getElementById('filtro-mes').addEventListener('change', filtrarComissoes);
+            document.getElementById('filtro-vendedor').addEventListener('input', filtrarComissoes);
             
-            // Configurar eventos
-            configurarEventos();
+            // Carrega os dados
+            carregarComissoes();
         });
-        
-        // Carregar lista de vendedores
-        async function carregarVendedores() {
-            try {
-                mostrarLoading(true);
-                
-                const response = await fetch(`${API_URL}/vendedores`);
-                if (!response.ok) throw new Error('Erro ao carregar vendedores');
-                
-                vendedores = await response.json();
-                const select = document.getElementById('vendedor');
-                
-                select.innerHTML = '<option value="" selected disabled>Selecione um vendedor</option>';
-                
-                vendedores.forEach(vendedor => {
-                    const option = document.createElement('option');
-                    option.value = vendedor.vendedor_id;
-                    option.textContent = vendedor.pessoa ? vendedor.pessoa.nome : 'Vendedor ' + vendedor.vendedor_id;
-                    select.appendChild(option);
-                });
-            } catch (error) {
-                mostrarAlerta('Erro ao carregar vendedores: ' + error.message, 'danger');
-            } finally {
-                mostrarLoading(false);
-            }
+
+        // Funções
+        function calcularComissao() {
+            const valorVenda = parseFloat(document.getElementById('valor-venda').value) || 0;
+            const percentual = parseFloat(document.getElementById('percentual').value) || 0;
+            const comissao = valorVenda * (percentual / 100);
+            document.getElementById('valor-comissao').value = comissao.toFixed(2);
         }
-        
-        // Carregar comissões
+
         async function carregarComissoes() {
-            mostrarLoading(true);
-            
             try {
                 const response = await fetch(`${API_URL}/comissoes`);
                 if (!response.ok) throw new Error('Erro ao carregar comissões');
                 
-                comissoes = await response.json();
-                renderizarTabela();
-                atualizarResumo();
+                const comissoes = await response.json();
+                atualizarDashboard(comissoes);
+                atualizarTabela(comissoes);
+                renderizarGrafico(comissoes);
             } catch (error) {
-                mostrarAlerta('Erro ao carregar comissões: ' + error.message, 'danger');
-            } finally {
-                mostrarLoading(false);
+                mostrarToast('Erro', `Falha ao carregar dados: ${error.message}`, 'danger');
             }
         }
-        
-        // Renderizar tabela com paginação
-        function renderizarTabela() {
-            const tabela = document.getElementById('comissoes-table');
-            const busca = document.getElementById('busca').value.toLowerCase();
-            const statusFiltro = document.getElementById('filtroStatus').value;
-            const mesFiltro = document.getElementById('filtroMes').value;
+
+        function atualizarDashboard(comissoes) {
+            if (!comissoes || comissoes.length === 0) return;
             
-            // Aplicar filtros
-            let comissoesFiltradas = comissoes.filter(comissao => {
-                const vendedorNome = (comissao.vendedores?.pessoa?.nome || '').toLowerCase();
-                const filtroBusca = busca === '' || vendedorNome.includes(busca);
-                const filtroStatus = statusFiltro === '0' || comissao.status_id.toString() === statusFiltro;
-                
-                let filtroMes = true;
-                if (mesFiltro) {
-                    const dataComissao = new Date(comissao.data_pagamento);
-                    const anoMesComissao = `${dataComissao.getFullYear()}-${String(dataComissao.getMonth() + 1).padStart(2, '0')}`;
-                    filtroMes = anoMesComissao === mesFiltro;
-                }
-                
-                return filtroBusca && filtroStatus && filtroMes;
-            });
-            
-            // Paginação
-            const totalPages = Math.ceil(comissoesFiltradas.length / itemsPerPage);
-            const startIndex = (currentPage - 1) * itemsPerPage;
-            const paginatedItems = comissoesFiltradas.slice(startIndex, startIndex + itemsPerPage);
-            
-            // Renderizar itens
-            tabela.innerHTML = paginatedItems.map(comissao => {
-                const vendedor = comissao.vendedores?.pessoa || {};
-                const statusClass = comissao.status_id == 1 ? 'status-pendente' : 'status-pago';
-                const statusText = comissao.status_id == 1 ? 'Pendente' : 'Pago';
-                
-                return `
-                    <tr>
-                        <td>${comissao.comissao_id}</td>
-                        <td>${vendedor.nome || 'N/A'}</td>
-                        <td>R$ ${parseFloat(comissao.valor_venda || 0).toFixed(2)}</td>
-                        <td>R$ ${parseFloat(comissao.valor || 0).toFixed(2)}</td>
-                        <td>${parseFloat(comissao.percentual || 0)}%</td>
-                        <td><span class="status-badge ${statusClass}">${statusText}</span></td>
-                        <td>${formatarData(comissao.data_pagamento)}</td>
-                        <td>R$ ${parseFloat(comissao.meta_vendas || 0).toFixed(2)}</td>
-                        <td>
-                            <button class="btn btn-sm btn-outline-primary btn-editar" data-id="${comissao.comissao_id}">
-                                <i class="bi bi-pencil"></i>
-                            </button>
-                            <button class="btn btn-sm btn-outline-danger btn-excluir" data-id="${comissao.comissao_id}">
-                                <i class="bi bi-trash"></i>
-                            </button>
-                        </td>
-                    </tr>
-                `;
-            }).join('') || `<tr><td colspan="9" class="text-center py-4">Nenhuma comissão encontrada</td></tr>`;
-            
-            // Renderizar paginação
-            renderizarPaginacao(totalPages);
-            
-            // Adicionar eventos aos botões de ação
-            document.querySelectorAll('.btn-editar').forEach(btn => {
-                btn.addEventListener('click', function() {
-                    editarComissao(this.getAttribute('data-id'));
-                });
-            });
-            
-            document.querySelectorAll('.btn-excluir').forEach(btn => {
-                btn.addEventListener('click', function() {
-                    confirmarExclusao(this.getAttribute('data-id'));
-                });
-            });
-        }
-        
-        // Renderizar paginação
-        function renderizarPaginacao(totalPages) {
-            const pagination = document.getElementById('pagination');
-            pagination.innerHTML = '';
-            
-            if (totalPages <= 1) return;
-            
-            // Botão Anterior
-            const prevLi = document.createElement('li');
-            prevLi.className = `page-item ${currentPage === 1 ? 'disabled' : ''}`;
-            prevLi.innerHTML = `<a class="page-link" href="#" aria-label="Previous">&laquo;</a>`;
-            prevLi.addEventListener('click', (e) => {
-                e.preventDefault();
-                if (currentPage > 1) {
-                    currentPage--;
-                    renderizarTabela();
-                }
-            });
-            pagination.appendChild(prevLi);
-            
-            // Páginas
-            const maxVisiblePages = 5;
-            let startPage = Math.max(1, currentPage - Math.floor(maxVisiblePages / 2));
-            let endPage = Math.min(totalPages, startPage + maxVisiblePages - 1);
-            
-            if (endPage - startPage + 1 < maxVisiblePages) {
-                startPage = Math.max(1, endPage - maxVisiblePages + 1);
-            }
-            
-            if (startPage > 1) {
-                const firstLi = document.createElement('li');
-                firstLi.className = 'page-item';
-                firstLi.innerHTML = `<a class="page-link" href="#">1</a>`;
-                firstLi.addEventListener('click', (e) => {
-                    e.preventDefault();
-                    currentPage = 1;
-                    renderizarTabela();
-                });
-                pagination.appendChild(firstLi);
-                
-                if (startPage > 2) {
-                    const ellipsisLi = document.createElement('li');
-                    ellipsisLi.className = 'page-item disabled';
-                    ellipsisLi.innerHTML = `<span class="page-link">...</span>`;
-                    pagination.appendChild(ellipsisLi);
-                }
-            }
-            
-            for (let i = startPage; i <= endPage; i++) {
-                const pageLi = document.createElement('li');
-                pageLi.className = `page-item ${i === currentPage ? 'active' : ''}`;
-                pageLi.innerHTML = `<a class="page-link" href="#">${i}</a>`;
-                pageLi.addEventListener('click', (e) => {
-                    e.preventDefault();
-                    currentPage = i;
-                    renderizarTabela();
-                });
-                pagination.appendChild(pageLi);
-            }
-            
-            if (endPage < totalPages) {
-                if (endPage < totalPages - 1) {
-                    const ellipsisLi = document.createElement('li');
-                    ellipsisLi.className = 'page-item disabled';
-                    ellipsisLi.innerHTML = `<span class="page-link">...</span>`;
-                    pagination.appendChild(ellipsisLi);
-                }
-                
-                const lastLi = document.createElement('li');
-                lastLi.className = 'page-item';
-                lastLi.innerHTML = `<a class="page-link" href="#">${totalPages}</a>`;
-                lastLi.addEventListener('click', (e) => {
-                    e.preventDefault();
-                    currentPage = totalPages;
-                    renderizarTabela();
-                });
-                pagination.appendChild(lastLi);
-            }
-            
-            // Botão Próximo
-            const nextLi = document.createElement('li');
-            nextLi.className = `page-item ${currentPage === totalPages ? 'disabled' : ''}`;
-            nextLi.innerHTML = `<a class="page-link" href="#" aria-label="Next">&raquo;</a>`;
-            nextLi.addEventListener('click', (e) => {
-                e.preventDefault();
-                if (currentPage < totalPages) {
-                    currentPage++;
-                    renderizarTabela();
-                }
-            });
-            pagination.appendChild(nextLi);
-        }
-        
-        // Atualizar resumo
-        function atualizarResumo() {
-            const totalPagar = comissoes
-                .filter(c => c.status_id == 1)
-                .reduce((sum, c) => sum + parseFloat(c.valor || 0), 0);
-            
-            const totalPago = comissoes
-                .filter(c => c.status_id == 2)
-                .reduce((sum, c) => sum + parseFloat(c.valor || 0), 0);
-            
-            const totalMeta = comissoes
-                .reduce((sum, c) => sum + parseFloat(c.meta_vendas || 0), 0);
-            
-            const totalVendas = comissoes
-                .reduce((sum, c) => sum + parseFloat(c.valor_venda || 0), 0);
-            
-            const percentualMeta = totalMeta > 0 ? Math.min(100, (totalVendas / totalMeta) * 100) : 0;
-            
-            document.getElementById('total-pagar').textContent = formatarMoeda(totalPagar);
+            // Total pago
+            const totalPago = comissoes.reduce((sum, c) => sum + parseFloat(c.valor), 0);
             document.getElementById('total-pago').textContent = formatarMoeda(totalPago);
-            document.getElementById('meta-mes').textContent = formatarMoeda(totalMeta);
+            
+            // Meta vs Realizado
+            const totalMeta = comissoes.reduce((sum, c) => sum + (parseFloat(c.meta_vendas) || 0), 0);
+            const totalVendas = comissoes.reduce((sum, c) => sum + (parseFloat(c.valor_venda) || 0), 0);
+            const percentualMeta = totalMeta > 0 ? Math.min(100, (totalVendas / totalMeta) * 100) : 0;
             
             const progressBar = document.getElementById('meta-progress');
             progressBar.style.width = `${percentualMeta}%`;
-            progressBar.setAttribute('aria-valuenow', percentualMeta);
             progressBar.textContent = `${percentualMeta.toFixed(1)}%`;
+            document.getElementById('meta-text').textContent = 
+                `Meta: ${formatarMoeda(totalMeta)} | Realizado: ${formatarMoeda(totalVendas)}`;
+            
+            // Último pagamento
+            const ultimaComissao = comissoes[0];
+            document.getElementById('ultimo-pagamento').textContent = formatarMoeda(ultimaComissao.valor);
+            document.getElementById('ultimo-vendedor').textContent = 
+                `${ultimaComissao.nome_vendedor} - ${formatarData(ultimaComissao.data_pagamento)}`;
         }
-        
-        // Configurar eventos
-        function configurarEventos() {
-            // Calcular comissão automaticamente
-            document.getElementById('valorVenda').addEventListener('input', calcularComissao);
-            document.getElementById('comissaoPercentual').addEventListener('input', calcularComissao);
+
+        function atualizarTabela(comissoes) {
+            const tbody = document.getElementById('tabela-comissoes');
+            if (!comissoes || comissoes.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="6" class="text-center py-4">Nenhuma comissão registrada</td></tr>';
+                return;
+            }
             
-            // Formulário de comissão
-            document.getElementById('formComissao').addEventListener('submit', async function(e) {
-                e.preventDefault();
-                await salvarComissao();
-            });
-            
-            // Filtros
-            document.getElementById('busca').addEventListener('input', renderizarTabela);
-            document.getElementById('filtroStatus').addEventListener('change', renderizarTabela);
-            document.getElementById('filtroMes').addEventListener('change', renderizarTabela);
-            
-            // Exportar
-            document.getElementById('btnExportar').addEventListener('click', exportarDados);
-            
-            // Configurar data padrão para hoje
-            document.getElementById('dataPagamento').valueAsDate = new Date();
+            tbody.innerHTML = comissoes.map(comissao => `
+                <tr>
+                    <td>${formatarData(comissao.data_pagamento)}</td>
+                    <td>${comissao.nome_vendedor || 'N/A'}</td>
+                    <td class="text-end">${formatarMoeda(comissao.valor_venda || 0)}</td>
+                    <td class="text-end fw-bold">${formatarMoeda(comissao.valor)}</td>
+                    <td class="text-end">${comissao.percentual || 0}%</td>
+                    <td class="text-end">${formatarMoeda(comissao.meta_vendas || 0)}</td>
+                </tr>
+            `).join('');
         }
-        
-        // Calcular valor da comissão
-        function calcularComissao() {
-            const valorVenda = parseFloat(document.getElementById('valorVenda').value) || 0;
-            const percentual = parseFloat(document.getElementById('comissaoPercentual').value) || 0;
-            const valorComissao = valorVenda * (percentual / 100);
+
+        function renderizarGrafico(comissoes) {
+            const ctx = document.getElementById('comissoes-chart').getContext('2d');
             
-            document.getElementById('valorComissao').value = valorComissao.toFixed(2);
-        }
-        
-        // Salvar comissão
-        async function salvarComissao() {
-            const form = document.getElementById('formComissao');
-            const vendedorId = document.getElementById('vendedor').value;
-            const valorVenda = document.getElementById('valorVenda').value;
-            const percentual = document.getElementById('comissaoPercentual').value;
-            const valorComissao = document.getElementById('valorComissao').value;
-            const status = document.getElementById('status').value;
-            const dataPagamento = document.getElementById('dataPagamento').value;
-            const metaVendas = document.getElementById('metaVendas').value;
-            
-            const comissaoData = {
-                valor: valorComissao,
-                status_id: status,
-                data_pagamento: dataPagamento,
-                vendedor_id: vendedorId,
-                meta_vendas: metaVendas,
-                valor_venda: valorVenda,
-                percentual: percentual
-            };
-            
-            try {
-                mostrarLoading(true);
+            // Agrupa por mês
+            const dadosPorMes = comissoes.reduce((acc, comissao) => {
+                const data = new Date(comissao.data_pagamento);
+                const mesAno = `${data.getFullYear()}-${String(data.getMonth() + 1).padStart(2, '0')}`;
                 
-                const response = await fetch(`${API_URL}/comissoes`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
+                if (!acc[mesAno]) {
+                    acc[mesAno] = { total: 0, meta: 0 };
+                }
+                
+                acc[mesAno].total += parseFloat(comissao.valor);
+                acc[mesAno].meta += parseFloat(comissao.meta_vendas || 0);
+                
+                return acc;
+            }, {});
+            
+            const meses = Object.keys(dadosPorMes).sort();
+            const totais = meses.map(mes => dadosPorMes[mes].total);
+            const metas = meses.map(mes => dadosPorMes[mes].meta);
+            
+            if (comissoesChart) {
+                comissoesChart.destroy();
+            }
+            
+            comissoesChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: meses,
+                    datasets: [
+                        {
+                            label: 'Comissões Pagas',
+                            data: totais,
+                            backgroundColor: 'rgba(52, 152, 219, 0.7)',
+                            borderColor: 'rgba(52, 152, 219, 1)',
+                            borderWidth: 1
+                        },
+                        {
+                            label: 'Metas',
+                            data: metas,
+                            type: 'line',
+                            borderColor: 'rgba(46, 204, 113, 1)',
+                            borderWidth: 2,
+                            fill: false
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                callback: function(value) {
+                                    return 'R$ ' + value.toLocaleString('pt-BR');
+                                }
+                            }
+                        }
                     },
-                    body: JSON.stringify(comissaoData)
-                });
-                
-                if (!response.ok) {
-                    const errorData = await response.json();
-                    throw new Error(errorData.message || 'Erro ao salvar comissão');
+                    plugins: {
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return context.dataset.label + ': R$ ' + context.raw.toLocaleString('pt-BR');
+                                }
+                            }
+                        }
+                    }
                 }
-                
-                mostrarAlerta('Comissão registrada com sucesso!', 'success');
-                form.reset();
-                document.getElementById('dataPagamento').valueAsDate = new Date();
-                await carregarComissoes();
-            } catch (error) {
-                mostrarAlerta('Erro ao salvar comissão: ' + error.message, 'danger');
-            } finally {
-                mostrarLoading(false);
-            }
+            });
+        }
+
+        async function salvarComissao(e) {
+    e.preventDefault();
+    
+    const form = e.target;
+    const btn = form.querySelector('button[type="submit"]');
+    const btnOriginal = btn.innerHTML;
+    
+    try {
+        btn.disabled = true;
+        btn.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Salvando...';
+        
+        // Obtenha todos os valores do formulário
+        const comissaoData = {
+            nome_vendedor: document.getElementById('nome-vendedor').value,
+            valor: document.getElementById('valor-comissao').value,
+            valor_venda: document.getElementById('valor-venda').value,
+            percentual: document.getElementById('percentual').value,
+            meta_vendas: document.getElementById('meta-vendas').value || null,
+            data_pagamento: document.getElementById('data-pagamento').value
+        };
+        
+        // Debug: mostre o que está sendo enviado
+        console.log('Dados sendo enviados:', comissaoData);
+        
+        const response = await fetch(`${API_URL}/comissoes`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(comissaoData)
+        });
+        
+        // Debug: mostre a resposta completa
+        console.log('Resposta do servidor:', response);
+        
+        if (!response.ok) {
+            const errorData = await response.json();
+            console.error('Erro detalhado:', errorData);
+            throw new Error(errorData.error || 'Erro ao salvar comissão');
         }
         
-        // Editar comissão
-        function editarComissao(id) {
-            const comissao = comissoes.find(c => c.comissao_id == id);
-            if (!comissao) {
-                mostrarAlerta('Comissão não encontrada', 'warning');
-                return;
-            }
+        const data = await response.json();
+        mostrarToast('Sucesso', 'Comissão registrada com sucesso!', 'success');
+        form.reset();
+        document.getElementById('data-pagamento').valueAsDate = new Date();
+        await carregarComissoes();
+    } catch (error) {
+        console.error('Erro completo:', error);
+        mostrarToast('Erro', error.message, 'danger');
+    } finally {
+        btn.disabled = false;
+        btn.innerHTML = btnOriginal;
+    }
+}
+
+        function filtrarComissoes() {
+            const mes = document.getElementById('filtro-mes').value;
+            const vendedor = document.getElementById('filtro-vendedor').value.toLowerCase();
             
-            document.getElementById('vendedor').value = comissao.vendedor_id;
-            document.getElementById('valorVenda').value = comissao.valor_venda || '';
-            document.getElementById('comissaoPercentual').value = comissao.percentual || '5';
-            document.getElementById('valorComissao').value = comissao.valor || '';
-            document.getElementById('status').value = comissao.status_id;
-            document.getElementById('dataPagamento').value = comissao.data_pagamento.split('T')[0];
-            document.getElementById('metaVendas').value = comissao.meta_vendas || '';
-            
-            // Scroll para o formulário
-            document.getElementById('formCollapse').scrollIntoView({ behavior: 'smooth' });
-            
-            mostrarAlerta('Comissão carregada para edição', 'info');
-        }
-        
-        // Confirmar exclusão
-        function confirmarExclusao(id) {
-            const modal = new bootstrap.Modal(document.getElementById('confirmModal'));
-            const comissao = comissoes.find(c => c.comissao_id == id);
-            
-            if (!comissao) {
-                mostrarAlerta('Comissão não encontrada', 'warning');
-                return;
-            }
-            
-            const vendedorNome = comissao.vendedores?.pessoa?.nome || 'N/A';
-            
-            document.getElementById('modalTitle').textContent = 'Excluir Comissão';
-            document.getElementById('modalBody').innerHTML = `
-                <p>Tem certeza que deseja excluir esta comissão?</p>
-                <div class="alert alert-warning p-2">
-                    <strong>Vendedor:</strong> ${vendedorNome}<br>
-                    <strong>Valor:</strong> R$ ${parseFloat(comissao.valor || 0).toFixed(2)}<br>
-                    <strong>Data:</strong> ${formatarData(comissao.data_pagamento)}
-                </div>
-            `;
-            
-            document.getElementById('modalConfirm').onclick = async function() {
-                await excluirComissao(id);
-                modal.hide();
-            };
-            
-            modal.show();
-        }
-        
-        // Excluir comissão
-        async function excluirComissao(id) {
-            try {
-                mostrarLoading(true);
-                
-                const response = await fetch(`${API_URL}/comissoes/${id}`, {
-                    method: 'DELETE'
+            fetch(`${API_URL}/comissoes`)
+                .then(response => response.json())
+                .then(comissoes => {
+                    const filtradas = comissoes.filter(c => {
+                        const dataComissao = new Date(c.data_pagamento);
+                        const mesAnoComissao = `${dataComissao.getFullYear()}-${String(dataComissao.getMonth() + 1).padStart(2, '0')}`;
+                        
+                        return (!mes || mesAnoComissao === mes) &&
+                               (!vendedor || (c.nome_vendedor && c.nome_vendedor.toLowerCase().includes(vendedor)));
+                    });
+                    
+                    atualizarTabela(filtradas);
+                    atualizarDashboard(filtradas);
+                })
+                .catch(error => {
+                    console.error('Erro ao filtrar:', error);
+                    mostrarToast('Erro', 'Falha ao filtrar comissões', 'danger');
                 });
-                
-                if (!response.ok) {
-                    const errorData = await response.json();
-                    throw new Error(errorData.message || 'Erro ao excluir comissão');
-                }
-                
-                mostrarAlerta('Comissão excluída com sucesso!', 'success');
-                await carregarComissoes();
-            } catch (error) {
-                mostrarAlerta('Erro ao excluir comissão: ' + error.message, 'danger');
-            } finally {
-                mostrarLoading(false);
-            }
         }
-        
-        // Exportar dados
-        function exportarDados() {
-            // Implementação básica - pode ser melhorada para gerar CSV ou Excel
-            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(comissoes, null, 2));
-            const downloadAnchor = document.createElement('a');
-            downloadAnchor.setAttribute("href", dataStr);
-            downloadAnchor.setAttribute("download", "comissoes_" + new Date().toISOString().slice(0, 10) + ".json");
-            document.body.appendChild(downloadAnchor);
-            downloadAnchor.click();
-            downloadAnchor.remove();
+
+        function mostrarToast(titulo, mensagem, tipo) {
+            const toastTitle = document.getElementById('toast-title');
+            const toastMsg = document.getElementById('toast-message');
             
-            mostrarAlerta('Exportação iniciada', 'info');
-        }
-        
-        // Mostrar/ocultar loading
-        function mostrarLoading(show) {
-            document.querySelector('.loading-spinner').style.display = show ? 'block' : 'none';
-        }
-        
-        // Mostrar alerta
-        function mostrarAlerta(mensagem, tipo) {
-            const toastEl = document.getElementById('liveToast');
-            const toastTitle = document.getElementById('toastTitle');
-            const toastMessage = document.getElementById('toastMessage');
-            
-            // Configura as classes do toast baseadas no tipo
-            toastEl.classList.remove('text-bg-primary', 'text-bg-success', 'text-bg-danger', 'text-bg-warning', 'text-bg-info');
+            // Remove classes de tipo anteriores
+            toastEl.classList.remove('text-bg-primary', 'text-bg-success', 'text-bg-danger', 'text-bg-warning');
+            // Adiciona a classe do tipo atual
             toastEl.classList.add(`text-bg-${tipo}`);
             
-            // Configura título e mensagem
-            toastTitle.textContent = tipo.charAt(0).toUpperCase() + tipo.slice(1);
-            toastMessage.textContent = mensagem;
-            
-            // Mostra o toast
-            const toast = bootstrap.Toast.getOrCreateInstance(toastEl);
+            toastTitle.textContent = titulo;
+            toastMsg.textContent = mensagem;
             toast.show();
         }
-        
-        // Formatadores
+
         function formatarMoeda(valor) {
-            return 'R$ ' + parseFloat(valor || 0).toFixed(2).replace('.', ',');
+            return 'R$ ' + parseFloat(valor || 0).toLocaleString('pt-BR', {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2
+            });
         }
-        
+
         function formatarData(dataString) {
             if (!dataString) return 'N/A';
-            
             const data = new Date(dataString);
-            if (isNaN(data)) return dataString;
-            
             return data.toLocaleDateString('pt-BR');
         }
     </script>
