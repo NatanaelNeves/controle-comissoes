@@ -17,7 +17,7 @@ const supabase = createClient(supabaseUrl, supabaseKey);
 app.get('/comissoes', async (req, res) => {
     try {
         const { data, error } = await supabase
-            .from('public.tbComissao')  // Usando o esquema public
+            .from('tbComissao')  // Apenas o nome da tabela, sem 'public.'
             .select('*');
 
         if (error) {
@@ -38,7 +38,7 @@ app.post('/comissoes', async (req, res) => {
 
     try {
         const { data, error } = await supabase
-            .from('public.tbComissao')  // Usando o esquema public
+            .from('tbComissao')  // Apenas o nome da tabela, sem 'public.'
             .insert([
                 { valor, status_id, data_pagamento, vendedor_id, meta_vendas }
             ]);
@@ -54,6 +54,7 @@ app.post('/comissoes', async (req, res) => {
         res.status(500).json({ message: 'Erro no servidor' });
     }
 });
+
 
 // Iniciar servidor
 app.listen(3002, () => {
