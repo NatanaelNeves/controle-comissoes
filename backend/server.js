@@ -1,8 +1,7 @@
 const express = require('express');
 const { createClient } = require('@supabase/supabase-js');
 const cors = require('cors');
-require('dotenv').config();  // Carregar as variáveis de ambiente do arquivo .env
-console.log("Arquivo carregado corretamente!");
+require('dotenv').config();
 
 const app = express();
 app.use(express.json());
@@ -13,50 +12,89 @@ const supabaseUrl = process.env.SUPABASE_URL;
 const supabaseKey = process.env.SUPABASE_KEY;
 const supabase = createClient(supabaseUrl, supabaseKey);
 
-// Listar todas as comissões
+// Middleware para tratamento de erros
+app.use((err, req, res, next) => {
+    console.error(err.stack);
+    res.status(500).json({ message: 'Erro no servidor' });
+});
+
+// Rotas para Comissões
 app.get('/comissoes', async (req, res) => {
     try {
         const { data, error } = await supabase
-            .from('tbcomissao')  // Apenas o nome da tabela, sem 'public.'
-            .select('*');
+            .from('tbcomissao')
+            .select(`
+                *,
+                vendedores:tbvendedores (
+                    *,
+                    pessoa:cadastro.tbPessoas (*)
+                )
+            `);
 
-        if (error) {
-            console.error('Erro ao buscar comissões:', error);
-            return res.status(500).json(error);
-        }
-
+        if (error) throw error;
         res.json(data);
     } catch (err) {
-        console.error('Erro no servidor:', err);
-        res.status(500).json({ message: 'Erro no servidor' });
+        console.error('Erro ao buscar comissões:', err);
+        res.status(500).json({ message: err.message });
     }
 });
 
-// Criar uma nova comissão
 app.post('/comissoes', async (req, res) => {
-    const { valor, status_id, data_pagamento, vendedor_id, meta_vendas } = req.body;
+    try {
+        const { valor, status_id, data_pagamento, vendedor_id, meta_vendas } = req.body;
+        
+        const { data, error } = await supabase
+            .from('tbcomissao')
+            .insert([{ valor, status_id, data_pagamento, vendedor_id, meta_vendas }])
+            .select();
 
+        if (error) throw error;
+        res.status(201).json(data[0]);
+    } catch (err) {
+        console.error('Erro ao criar comissão:', err);
+        res.status(500).json({ message: err.message });
+    }
+});
+
+// Rotas para Vendedores
+app.get('/vendedores', async (req, res) => {
     try {
         const { data, error } = await supabase
-            .from('tbcomissao')  // Apenas o nome da tabela, sem 'public.'
-            .insert([
-                { valor, status_id, data_pagamento, vendedor_id, meta_vendas }
-            ]);
+            .from('tbvendedores')
+            .select(`
+                *,
+                pessoa:cadastro.tbPessoas (*)
+            `);
 
-        if (error) {
-            console.error('Erro ao criar comissão:', error);
-            return res.status(500).json(error);
-        }
-
-        res.json({ id: data[0].comissao_id, ...req.body });
+        if (error) throw error;
+        res.json(data);
     } catch (err) {
-        console.error('Erro no servidor:', err);
-        res.status(500).json({ message: 'Erro no servidor' });
+        console.error('Erro ao buscar vendedores:', err);
+        res.status(500).json({ message: err.message });
     }
 });
 
+app.get('/vendedores/:id', async (req, res) => {
+    try {
+        const { data, error } = await supabase
+            .from('tbvendedores')
+            .select(`
+                *,
+                pessoa:cadastro.tbPessoas (*)
+            `)
+            .eq('vendedor_id', req.params.id)
+            .single();
+
+        if (error) throw error;
+        res.json(data);
+    } catch (err) {
+        console.error('Erro ao buscar vendedor:', err);
+        res.status(500).json({ message: err.message });
+    }
+});
 
 // Iniciar servidor
-app.listen(3002, () => {
-    console.log('Servidor rodando na porta 3002');
+const PORT = process.env.PORT || 3002;
+app.listen(PORT, () => {
+    console.log(`Servidor rodando na porta ${PORT}`);
 });
