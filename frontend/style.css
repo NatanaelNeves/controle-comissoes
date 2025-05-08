@@ -1,0 +1,28 @@
+:root {
+    --primary: #3498db;
+    --secondary: #2c3e50;
+    --success: #2ecc71;
+    --warning: #f39c12;
+}
+
+.card-dashboard {
+    border-left: 4px solid var(--primary);
+    transition: transform 0.3s;
+}
+.card-dashboard:hover {
+    transform: translateY(-5px);
+}
+
+.progress-thin {
+    height: 8px;
+}
+
+.table-responsive {
+    max-height: 500px;
+}
+
+.toast-container {
+    top: 20px;
+    right: 20px;
+    z-index: 1100;
+}

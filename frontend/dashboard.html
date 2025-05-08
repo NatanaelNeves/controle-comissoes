@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Gestão de Comissões</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="assets/css/styles.css">
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary shadow-sm">
+        <div class="container">
+            <a class="navbar-brand" href="#">
+                <i class="bi bi-cash-stack"></i> Gestão de Comissões
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="dashboard.html"><i class="bi bi-speedometer2"></i> Dashboard</a>
+                    </li>
+                    <li class="nav-item" id="menu-usuarios" style="display: none;">
+                        <a class="nav-link" href="usuarios.html"><i class="bi bi-people"></i> Usuários</a>
+                    </li>
+                    <li class="nav-item">
+                        <button id="btn-logout" class="nav-link btn btn-link"><i class="bi bi-box-arrow-right"></i> Sair</button>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Conteúdo Principal -->
+    <div class="container py-4">
+        <!-- Dashboard -->
+        <div class="row mb-4 g-3">
+            <div class="col-md-4">
+                <div class="card card-dashboard h-100">
+                    <div class="card-body">
+                        <h5 class="card-title"><i class="bi bi-wallet2"></i> Total Pago</h5>
+                        <h2 id="total-pago" class="display-6">R$ 0,00</h2>
+                        <p class="text-muted mb-0">Este mês</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card card-dashboard h-100">
+                    <div class="card-body">
+                        <h5 class="card-title"><i class="bi bi-graph-up"></i> Meta vs Realizado</h5>
+                        <div class="progress progress-thin mt-2">
+                            <div id="meta-progress" class="progress-bar bg-success" style="width: 0%"></div>
+                        </div>
+                        <div id="meta-text" class="mt-2 small text-muted">Meta: R$ 0,00 | Realizado: R$ 0,00</div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card card-dashboard h-100">
+                    <div class="card-body">
+                        <h5 class="card-title"><i class="bi bi-calendar-check"></i> Último Pagamento</h5>
+                        <h4 id="ultimo-pagamento" class="display-6">-</h4>
+                        <p id="ultimo-vendedor" class="text-muted mb-0">Nenhum registro</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Gráfico e Formulário -->
+        <div class="row mb-4 g-3">
+            <div class="col-lg-8">
+                <div class="card shadow-sm h-100">
+                    <div class="card-body">
+                        <h5 class="card-title"><i class="bi bi-bar-chart"></i> Histórico Mensal</h5>
+                        <canvas id="comissoes-chart" height="250"></canvas>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4">
+                <div class="card shadow-sm h-100">
+                    <div class="card-body">
+                        <h5 class="card-title"><i class="bi bi-plus-circle"></i> Nova Comissão</h5>
+                        <form id="form-comissao">
+                            <div class="mb-3">
+                                <label class="form-label">Vendedor</label>
+                                <input type="text" class="form-control" id="nome-vendedor" required>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Valor da Venda (R$)</label>
+                                <input type="number" step="0.01" class="form-control" id="valor-venda" required>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Percentual (%)</label>
+                                <input type="number" step="0.1" class="form-control" id="percentual" value="5" required>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Comissão (R$)</label>
+                                <input type="number" step="0.01" class="form-control" id="valor-comissao" readonly>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Meta (R$)</label>
+                                <input type="number" step="0.01" class="form-control" id="meta-vendas">
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Data</label>
+                                <input type="date" class="form-control" id="data-pagamento" required>
+                            </div>
+                            <button type="submit" class="btn btn-primary w-100">
+                                <i class="bi bi-save"></i> Registrar
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tabela de Comissões -->
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h5 class="card-title mb-0"><i class="bi bi-list-check"></i> Registro de Comissões</h5>
+                    <div class="d-flex">
+                        <input type="month" class="form-control me-2" id="filtro-mes">
+                        <input type="text" class="form-control" placeholder="Filtrar vendedor..." id="filtro-vendedor">
+                    </div>
+                </div>
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Data</th>
+                                <th>Vendedor</th>
+                                <th class="text-end">Valor Venda</th>
+                                <th class="text-end">Comissão</th>
+                                <th class="text-end">%</th>
+                                <th class="text-end">Meta</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tabela-comissoes">
+                            <tr>
+                                <td colspan="6" class="text-center py-4">
+                                    <div class="spinner-border text-primary" role="status">
+                                        <span class="visually-hidden">Carregando...</span>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div class="toast-container position-fixed">
+        <div id="live-toast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+            <div class="toast-header">
+                <strong class="me-auto" id="toast-title">Notificação</strong>
+                <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+            </div>
+            <div class="toast-body" id="toast-message"></div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="assets/js/auth.js"></script>
+    <script src="assets/js/dashboard.js"></script>
+</body>
+</html>
